@@ -1,4 +1,4 @@
-package com.Innovatech.api_gateway.dto;
+package com.innovatech.api_gateway.dto;
 
 public class LoginResponse {
     public String token;

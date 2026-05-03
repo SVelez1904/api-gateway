@@ -1,4 +1,4 @@
-package com.Innovatech.api_gateway.security;
+package com.innovatech.api_gateway.security;
 
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -15,7 +15,13 @@ public class JwtFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        if (path.startsWith("/auth/login")) {
+        System.out.println("GATEWAY PATH: " + path);
+
+        // Log para depurar en la terminal de Fedora
+        System.out.println("Gateway procesando: " + path);
+
+        // Ajuste: verificar que el path contenga registro o login de forma segura
+        if (path.contains("/api/usuarios/login") || path.contains("/api/usuarios/registro")) {
             return chain.filter(exchange);
         }
 

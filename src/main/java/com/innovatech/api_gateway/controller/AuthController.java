@@ -1,4 +1,4 @@
-package com.Innovatech.api_gateway.controller;
+/*package com.Innovatech.api_gateway.controller;
 
 import com.Innovatech.api_gateway.dto.LoginRequest;
 import com.Innovatech.api_gateway.dto.LoginResponse;
@@ -22,4 +22,4 @@ public class AuthController {
 
         throw new RuntimeException("Credenciales inválidas");
     }
-}
+}*/ // se elimina esta clase ya que ahora los tokens los gestoina api-usuario

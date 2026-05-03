@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8080 # Puerto interno del contenedor (en el compose mapeas 8085:8080)
 
 spring:
   application:
@@ -9,10 +9,20 @@ spring:
   cloud:
     gateway:
       routes:
+        # Ruta para Proyectos
         - id: gestion-proyectos
-          uri: http://api-proyectos:8081
+          uri: http://api-proyectos:8080 # El puerto interno de la API proyectos
           predicates:
             - Path=/api/proyectos/**
+
+        # NUEVA: Ruta para Usuarios y Auth
+        - id: gestion-usuarios
+          uri: http://api-usuarios:8080 # El nombre del servicio en el docker-compose
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            - StripPrefix=1  # Elimina /api/usuarios de la ruta enviada
+            - PreserveHostHeader
 
 management:
   endpoints:
