@@ -19,6 +19,15 @@ public class JwtFilter implements GlobalFilter, Ordered {
 
         // Log para depurar en la terminal de Fedora
         System.out.println("Gateway procesando: " + path);
+        boolean isAuth = path.contains("/api/usuarios/login") || path.contains("/api/usuarios/registro");
+        boolean isSwagger = path.contains("/v3/api-docs") ||
+                path.contains("/swagger-ui") ||
+                path.contains("/swagger-resources") ||
+                path.contains("/webjars");
+        if (isAuth || isSwagger) {
+            System.out.println("GATEWAY - Ruta pública detectada, saltando JWT: " + path);
+            return chain.filter(exchange);
+        }
 
         // Ajuste: verificar que el path contenga registro o login de forma segura
         if (path.contains("/api/usuarios/login") || path.contains("/api/usuarios/registro")) {

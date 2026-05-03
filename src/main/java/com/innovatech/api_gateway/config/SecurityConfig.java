@@ -12,24 +12,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        System.out.println("⚠️ GATEWAY: CARGANDO CONFIGURACIÓN CENTRALIZADA");
+        System.out.println("⚠️ GATEWAY: CARGANDO CONFIGURACIÓN PARA SWAGGER Y USUARIOS");
+
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // 1. DESACTIVAR el formulario de login y la autenticación básica
-                // Esto evita que Spring genere la contraseña aleatoria
+                // Desactivamos explícitamente lo que causa el cuadro de diálogo
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 
                 .authorizeExchange(exchange -> exchange
-                        // 2. Asegurar que las rutas del microservicio de usuarios sean libres
+                        // 1. RUTAS DE SWAGGER Y OPENAPI (Indispensables para el 8085)
+                        .pathMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/webjars/**",
+                                "/swagger-resources/**"
+                        ).permitAll()
+
+                        // 2. Rutas de la API de Usuarios
                         .pathMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
                         .pathMatchers("/api/usuarios/**").permitAll()
 
-                        // 3. Bloquear el resto (Proyectos, etc.) para el futuro
+                        // 3. El resto sigue bloqueado
                         .anyExchange().authenticated()
                 )
                 .build();
     }
-
-
 }
