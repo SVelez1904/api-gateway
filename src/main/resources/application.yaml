@@ -17,7 +17,7 @@ spring:
 
         # 2. Ruta para Proyectos
         - id: gestion-proyectos
-          uri: http://api-proyectos:8080
+          uri: http://api-proyectos:8081
           predicates:
             - Path=/api/proyectos/**
 

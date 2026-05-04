@@ -33,6 +33,7 @@ public class SecurityConfig {
                         // 2. Rutas de la API de Usuarios
                         .pathMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
                         .pathMatchers("/api/usuarios/**").permitAll()
+                        .pathMatchers("/api/proyectos/**").permitAll()
 
                         // 3. El resto sigue bloqueado
                         .anyExchange().authenticated()
