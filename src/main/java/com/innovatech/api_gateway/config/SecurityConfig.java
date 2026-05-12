@@ -16,12 +16,11 @@ public class SecurityConfig {
 
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // Desactivamos explícitamente lo que causa el cuadro de diálogo
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 
                 .authorizeExchange(exchange -> exchange
-                        // 1. RUTAS DE SWAGGER Y OPENAPI (Indispensables para el 8085)
+                        // 1. RUTAS DE SWAGGER Y OPENAPI
                         .pathMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -34,7 +33,7 @@ public class SecurityConfig {
                         .pathMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
                         .pathMatchers("/api/usuarios/**").permitAll()
                         .pathMatchers("/api/proyectos/**").permitAll()
-
+                        .pathMatchers("/api/analytics/dashboard/**").permitAll()
                         // 3. El resto sigue bloqueado
                         .anyExchange().authenticated()
                 )
