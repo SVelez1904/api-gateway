@@ -8,6 +8,18 @@ spring:
     web-application-type: reactive
   cloud:
     gateway:
+      # --- CONFIGURACIÓN GLOBAL DE CORS ---
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      # ------------------------------------
       routes:
         # 1. Ruta para el Swagger de Usuarios
         - id: swagger-usuarios
@@ -20,6 +32,8 @@ spring:
           uri: http://api-proyectos:8081
           predicates:
             - Path=/api/proyectos/**
+          filters:
+            - StripPrefix=1
 
         # 3. Ruta para Usuarios y Auth
         - id: gestion-usuarios
@@ -28,15 +42,14 @@ spring:
             - Path=/api/usuarios/**
           filters:
             - StripPrefix=1
-            - PreserveHostHeader
 
-        # 4. RUTA: Analytics
-        - id: api-analytics
-          uri: http://api-analytics:8080  # Asegúrate de que este sea el host/puerto real
-          predicates:
-            - Path=/api/analytics/**
-          filters:
-            - StripPrefix=0 # Cámbialo a 1 si el microservicio no espera "/api" en su controller
+        # 4. RUTA: Analytics (Opcional)
+        #- id: api-analytics
+          #uri: http://api-analytics:8080
+          #predicates:
+            #- Path=/api/analytics/**
+          #filters:
+            #- StripPrefix=1
 
 management:
   endpoints:
