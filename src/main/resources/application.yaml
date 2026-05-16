@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8080 # Puerto interno del contenedor (mapeado afuera como 8085)
 
 spring:
   application:
@@ -14,42 +14,51 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins: "http://localhost:5173"
-            allowedMethods: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
-      # ------------------------------------
-      routes:
-        # 1. Ruta para el Swagger de Usuarios
-        - id: swagger-usuarios
-          uri: http://api-usuarios:8080
-          predicates:
-            - Path=/v3/api-docs/**, /swagger-ui/**, /swagger-ui.html
 
-        # 2. Ruta para Proyectos
-        - id: gestion-proyectos
-          uri: http://api-proyectos:8081
-          predicates:
-            - Path=/api/proyectos/**
-          filters:
-            - StripPrefix=1
+      # --- ENRUTAMIENTO DE MICROSERVICIOS ---
+            # --- ENRUTAMIENTO DE MICROSERVICIOS ---
+            routes:
+              # 1. Ruta para el Swagger de Usuarios
+              - id: swagger-usuarios
+                uri: http://api-usuarios:8080
+                predicates:
+                  - Path=/v3/api-docs/**, /swagger-ui/**, /swagger-ui.html
 
-        # 3. Ruta para Usuarios y Auth
-        - id: gestion-usuarios
-          uri: http://api-usuarios:8080
-          predicates:
-            - Path=/api/usuarios/**
-          filters:
-            - StripPrefix=1
+              # 2. Ruta para Proyectos (Alineado con @RequestMapping("/proyectos"))
+              - id: gestion-proyectos
+                uri: http://api-proyectos:8081
+                predicates:
+                  - Path=/api/proyectos/**
+                filters:
+                  - StripPrefix=1 # Elimina "/api", enviando solo "/proyectos/**" al microservicio
+                  # 👇 AGREGA ESTA LÍNEA PARA ELIMINAR EL COPIADO DUPLICADO
+                  - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
 
-        # 4. RUTA: Analytics (Opcional)
-        #- id: api-analytics
-          #uri: http://api-analytics:8080
-          #predicates:
-            #- Path=/api/analytics/**
-          #filters:
-            #- StripPrefix=1
+              # 3. Ruta para Usuarios y Auth
+              - id: gestion-usuarios
+                uri: http://api-usuarios:8080
+                predicates:
+                  - Path=/api/usuarios/**
+                filters:
+                  - StripPrefix=1
+                  # (Opcional) Agrégalo también aquí si notas que usuarios te da el mismo error
+                  - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+
+              # 4. Ruta para Analytics
+              - id: api-analytics
+                uri: http://api-analytics:8080
+                predicates:
+                  - Path=/api/analytics/**
+                filters:
+                  - StripPrefix=1
 
 management:
   endpoints:
