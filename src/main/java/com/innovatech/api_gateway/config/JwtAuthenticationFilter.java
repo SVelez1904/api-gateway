@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                                 .collect(Collectors.toList());
                     }
 
-                    // 2. Mutar la petición para INYECTAR las cabeceras que tus microservicios esperan
+                    // 2. Mutar la petición para INYECTAR las cabeceras a las apis
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                             .header("X-User-Username", username)
                             .header("X-User-Roles", rolesString != null ? rolesString : "")
